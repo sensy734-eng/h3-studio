@@ -1,5 +1,7 @@
 # H3 Studio · MiniMax H3 本地出片工作台
 
+**[中文](README.md) | [English](README.en.md)**
+
 > 在 **8GB 显存** 的消费级显卡上跑通 MiniMax H3(33B 全模态音视频扩散模型),并提供统一的中文 Web 工作台:H3 视频四模式 + 多镜头 + 提示词优化 + 专职图像模型(NoobAI-XL / Krea-2-Turbo)文生图/图生图,全部带本机实测基准数据。
 
 ![modes](https://img.shields.io/badge/modes-8-green) ![vram](https://img.shields.io/badge/VRAM-8GB%20OK-blue) ![comfyui](https://img.shields.io/badge/ComfyUI-0.33-orange)
@@ -32,7 +34,7 @@
 
 | 配置 | 效果 |
 |---|---|
-| 8GB 显存(实测基线) | 视频 864×480 全模式可用,5s·8步 ≈ 188s/条;生图 14-38s/张 |
+| 8GB 显存(实测基线) | 视频 864×480 全模式可用,5秒·8步 ≈ 188 秒/条;生图 14-38 秒/张 |
 | 12GB+ 显存 | 可尝试更大画布与更长时长 |
 | 32GB RAM(推荐) | 模型换载需要系统内存 |
 
@@ -75,23 +77,23 @@ powershell -ExecutionPolicy Bypass -File scripts\launcher.ps1
 
 ### 视频(H3,864×480,RTX 5060 8GB)
 
-| 模式 | 5s·8步 | 10s·8步 | 15s·8步 | 15s·20步 |
+| 模式 | 5秒·8步 | 10秒·8步 | 15秒·8步 | 15秒·20步 |
 |---|---|---|---|---|
-| T2VA | **188s** | 543s | 898s | 2043s |
-| I2VA | 188s | 468s | 985s | — |
-| FL2VA | 200s | 513s | 1078s | — |
-| Ref2VA | 188s | 468s | 985s | — |
+| T2VA | **188 秒** | 543 秒 | 898 秒 | 2043 秒(≈34 分钟) |
+| I2VA | 188 秒 | 468 秒 | 985 秒 | — |
+| FL2VA | 200 秒 | 513 秒 | 1078 秒(≈18 分钟) | — |
+| Ref2VA | 188 秒 | 468 秒 | 985 秒 | — |
 
-VRAM 峰值 7.0-7.7GB · GPU 均载 86-97% · 温度 66-70℃ · 20 步音频底噪 -17dB(8 步 -51dB)
+> 表中耗时单位均为**秒**。VRAM 峰值 7.0-7.7GB · GPU 均载 86-97% · 温度 66-70℃ · 20 步音频底噪 -17dB(8 步 -51dB)
 
 ### 图片(NoobAI / Krea,1024²)
 
 | 模型 | 参数 | 耗时 | VRAM 峰值 |
 |---|---|---|---|
-| NoobAI-XL | 20步·cfg5 | 14-18s | 7.2GB |
-| NoobAI-XL | 图生图 dn0.75 | 10s | 6.9GB |
-| Krea-2-Turbo | 4步·cfg1 | 16s | 7.5GB |
-| Krea-2-Turbo | 8步·cfg1 | 26s | 7.4GB |
+| NoobAI-XL | 20步·cfg5 | 14-18 秒 | 7.2GB |
+| NoobAI-XL | 图生图 dn0.75 | 10 秒 | 6.9GB |
+| Krea-2-Turbo | 4步·cfg1 | 16 秒 | 7.5GB |
+| Krea-2-Turbo | 8步·cfg1 | 26 秒 | 7.4GB |
 
 完整数据:`benchmark/`(results.json + 逐秒遥测 CSV + 复现脚本)
 
@@ -115,7 +117,7 @@ h3-studio/
 └─ docs/
    ├─ h3-prompt-library.md        # H3 提示词库(最佳实践模板)
    ├─ vram-tuning.md              # 8GB 显存调优实战(踩坑记录)
-   └─ image-model-research.md     # 无内容限制生图模型调研
+   └─ image-model-research.md     # 8GB 显存生图模型选型调研
 ```
 
 ---
@@ -153,8 +155,8 @@ h3-studio/
 ## 🙏 致谢
 
 - MiniMax 团队与 H3 开源社区
-- [kijai](https://github.com/kijai) 的 ComfyUI 生态节点
-- 所有在 8GB 显存极限边缘疯狂试探的同学们
+- [T8mars](https://github.com/T8mars) 与 ComfyUI 生态的节点作者们
+- 所有尝试在 8GB 显存下进行该项工作的开源作者们
 
 ---
 

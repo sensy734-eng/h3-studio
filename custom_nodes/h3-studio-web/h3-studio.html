@@ -201,7 +201,7 @@
     <div class="field">
       <label>模型后端</label>
       <select id="stillBackend">
-        <option value="noobai">🎨 NoobAI-XL 1.0 · SDXL(细节/风格自由,无内容过滤)</option>
+        <option value="noobai">🎨 NoobAI-XL 1.0 · SDXL(细节/风格自由,社区生态丰富)</option>
         <option value="krea">⚡ Krea-2-Turbo · Blackwell 原生 NVFP4(最快,字面遵循强)</option>
         <option value="h3">📼 H3 微视频(旧通道,备选)</option>
       </select>
@@ -829,12 +829,18 @@ function tierStats(d, s){
   return {min_s: Math.round(walls[0]), max_s: Math.round(walls[walls.length-1]), med_s: Math.round(med),
           vram_max: Math.max(...vrams), n: walls.length};
 }
+function fmtWall(s){
+  s = Math.round(s);
+  if(!s || isNaN(s)) return '—';
+  if(s < 90) return s + ' 秒';
+  return Math.floor(s/60) + ' 分 ' + (s%60) + ' 秒';
+}
 $('preset').addEventListener('change', ()=>{
   const info = $('presetInfo');
   if(!BENCH || !$('preset').value){ info.textContent=''; return; }
   const [d, s] = $('preset').value.split('_');
   const st = tierStats(d, s);
-  info.textContent = st ? ('⏱️ 预计 ' + st.min_s + '–' + st.max_s + ' 秒/条(中位 ' + st.med_s + 's, ' + st.n + ' 个模式实测) · 峰值显存约 ' + (st.vram_max/1024).toFixed(1) + 'GB')
+  info.textContent = st ? ('⏱️ 预计 ' + fmtWall(st.min_s) + ' – ' + fmtWall(st.max_s) + ' /条(中位 ' + fmtWall(st.med_s) + ', ' + st.n + ' 个模式实测) · 峰值显存约 ' + (st.vram_max/1024).toFixed(1) + 'GB')
                         : '该档位暂无实测数据';
 });
 $('applyPreset').addEventListener('click', ()=>{
@@ -857,7 +863,7 @@ function renderBenchTable(){
     let h = '<table><tr><th>模型</th><th>参数</th><th>耗时</th><th>VRAM 峰值</th><th>体积</th></tr>';
     for(const [model, rows] of Object.entries(IMG_BENCH)){
       rows.forEach(r=>{
-        h += '<tr><td><b>'+(model==='noobai'?'NoobAI-XL':'Krea-2-Turbo')+'</b></td><td>'+r.label+'</td><td>'+r.wall_s+'s</td><td>'+r.vram.toFixed(1)+'GB</td><td style="color:var(--dim);font-size:11px">'+r.size_kb+'KB</td></tr>';
+        h += '<tr><td><b>'+(model==='noobai'?'NoobAI-XL':'Krea-2-Turbo')+'</b></td><td>'+r.label+'</td><td>'+r.wall_s+' 秒</td><td>'+r.vram.toFixed(1)+'GB</td><td style="color:var(--dim);font-size:11px">'+r.size_kb+'KB</td></tr>';
       });
     }
     h += '</table>';
@@ -876,7 +882,7 @@ function renderBenchTable(){
     h += '<tr><td><b>'+m+'</b></td>';
     cols.forEach(c=>{
       const rec = BENCH[m]?.[c[0]]?.[c[1]];
-      h += rec ? '<td>'+Math.round(rec.wall_s)+'s<br><span style="color:var(--dim);font-size:11px">'+(rec.vram_mb? (rec.vram_mb/1024).toFixed(1)+'GB':'-')+' · '+(rec.quality?.motion_psnr?rec.quality.motion_psnr.toFixed(1)+'dB':'')+'</span></td>'
+      h += rec ? '<td>'+fmtWall(rec.wall_s)+'<br><span style="color:var(--dim);font-size:11px">'+(rec.vram_mb? (rec.vram_mb/1024).toFixed(1)+'GB':'-')+' · '+(rec.quality?.motion_psnr?rec.quality.motion_psnr.toFixed(1)+'dB':'')+'</span></td>'
                : '<td style="color:var(--dim)">—</td>';
     });
     h += '</tr>';
@@ -1173,8 +1179,8 @@ let stillImg = null, stillImgDims = null;
 bindUpload('stillUpload','stillFile','stillHint','stillThumb','stillSub','stillClear', n=>stillImg=n, d=>stillImgDims=d);
 
 const STILL_BENCH = {
-  noobai: '⚡ 本机实测(RTX 5060 8GB): NoobAI-XL 1024² · 20步·cfg5 ≈ 14-18s/张 · 图生图 dn0.75 ≈ 10s · VRAM 峰值 ~7.4GB',
-  krea: '⚡ 本机实测(RTX 5060 8GB): Krea-2-Turbo 1024² · s4 ≈ 16s / s8 ≈ 26s / s12 ≈ 38s · 字面遵循强 · 8GB 需频繁换载,速度与 NoobAI 相当',
+  noobai: '⚡ 本机实测(RTX 5060 8GB): NoobAI-XL 1024² · 20步·cfg5 ≈ 14-18 秒/张 · 图生图 dn0.75 ≈ 10 秒 · VRAM 峰值 ~7.4GB',
+  krea: '⚡ 本机实测(RTX 5060 8GB): Krea-2-Turbo 1024² · s4 ≈ 16 秒 / s8 ≈ 26 秒 / s12 ≈ 38 秒 · 字面遵循强 · 8GB 需频繁换载,速度与 NoobAI 相当',
   h3: '📼 H3 旧通道: 22帧微视频取帧 ≈ 90s(慢,仅备选)'
 };
 function syncStillUI(){

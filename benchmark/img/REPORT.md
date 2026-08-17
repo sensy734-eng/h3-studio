@@ -14,7 +14,7 @@
 
 | 文件 | 大小 | 用途 | 来源 |
 |---|---|---|---|
-| `NoobAI-XL-v1.0.safetensors` | 6,616.6 MB | SDXL 全量 checkpoint(无内容过滤) | hf-mirror / Laxhar/noobai-XL-1.0 |
+| `NoobAI-XL-v1.0.safetensors` | 6,616.6 MB | SDXL 全量 checkpoint | hf-mirror / Laxhar/noobai-XL-1.0 |
 | `krea2_turbo_nvfp4.safetensors` | 7,318.2 MB | Krea-2 Turbo UNET(NVFP4,Blackwell 原生) | hf-mirror / Comfy-Org/Krea-2 |
 | `qwen3vl_4b_fp8_scaled.safetensors` | 4,999.6 MB | Krea-2 文本编码器(Qwen3-VL-4B FP8) | hf-mirror / Comfy-Org/Krea-2 |
 | `qwen_image_vae.safetensors` | 242.0 MB | Krea-2 图像 VAE | hf-mirror / Comfy-Org/Krea-2 |
@@ -29,7 +29,7 @@
 
 ## 2. 基准结果(10 轮,含遥测)
 
-| 轮次 | 参数 | 耗时 | VRAM 峰值 | GPU 均载 | 温度 | PSNR* | 说明 |
+| 轮次 | 参数 | 耗时(秒) | VRAM 峰值 | GPU 均载 | 温度 | PSNR* | 说明 |
 |---|---|---|---|---|---|---|---|
 | NOOBAI_1024_s20_cfg5 | 1024²·20步·cfg5·euler_ancestral/karras | **18.1s** | 7.24GB | 60% | 59℃ | — | 首轮含模型加载 |
 | NOOBAI_1024_s30_cfg5 | 1024²·30步·cfg5 | 18.1s | 7.36GB | 75% | 62℃ | — | 与 20 步同耗时,受 GPU 频率波动影响 |
@@ -45,7 +45,7 @@
 \* PSNR:输出与源图相似度(越高越贴近原图),仅图生图轮次计算。
 
 ### 结论要点
-- **速度**:NoobAI 20-30 步 ≈ 14-18s/张(稳态 10-14s);Krea 4-12 步 ≈ 16-38s。**Krea 在 8GB 上并未比 NoobAI 快** —— 7.3GB NVFP4 模型 + 4GB FP8 文本编码器在 8GB 显存下需频繁换载,抵消了步数优势;其价值在**字面遵循与构图准确**(turbo 蒸馏模型对提示词响应直接)。
+- **速度**:NoobAI 20-30 步 ≈ 14-18 秒/张(稳态 10-14 秒);Krea 4-12 步 ≈ 16-38 秒。**Krea 在 8GB 上并未比 NoobAI 快** —— 7.3GB NVFP4 模型 + 4GB FP8 文本编码器在 8GB 显存下需频繁换载,抵消了步数优势;其价值在**字面遵循与构图准确**(turbo 蒸馏模型对提示词响应直接)。
 - **显存**:两者 VRAM 峰值 7.0-7.5GB,8GB 卡均可稳定运行,无 OOM。
 - **图生图**:NoobAI dn0.75 PSNR 15.6dB(保留构图、改细节);Krea dn0.7 PSNR 11.9dB(改动更大,适合风格转换)。注意源图为 864×480,I2I 输出跟随源图尺寸。
 - **稳定性**:全 10 轮零失败;温度 59-64℃,GPU 均载 49-89%。
