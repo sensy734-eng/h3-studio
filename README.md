@@ -156,7 +156,7 @@ h3-studio/
 
 - MiniMax 团队与 H3 开源社区
 - [T8mars](https://github.com/T8mars) 与 ComfyUI 生态的节点作者们
-- 所有尝试在 8GB 显存下进行该项工作的开源作者们
+- 所有尝试在 8GB 显存下进行优化的开源作者们
 
 ---
 
