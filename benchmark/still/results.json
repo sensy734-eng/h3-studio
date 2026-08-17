@@ -1,0 +1,184 @@
+[
+ {
+  "key": "T2I_22f_s8_1024",
+  "wall_s": 87.2,
+  "telemetry": {
+   "gpu_mean": 68.6,
+   "gpu_max": 99.0,
+   "vram_max": 7306.0,
+   "power_mean": 95.8,
+   "temp_max": 64.0,
+   "ram_max": 0.0,
+   "samples": 28
+  },
+  "quality": {
+   "size_kb": 1097.6,
+   "lum_mean": 95.2,
+   "lum_std": 59.0,
+   "w": 1024,
+   "h": 1024
+  },
+  "output": "ST_T2I_22s8_00001_.png"
+ },
+ {
+  "key": "T2I_22f_s20_1024",
+  "wall_s": 313.9,
+  "telemetry": {
+   "gpu_mean": 38.7,
+   "gpu_max": 100.0,
+   "vram_max": 7186.0,
+   "power_mean": 68.9,
+   "temp_max": 65.0,
+   "ram_max": 0.0,
+   "samples": 101
+  },
+  "quality": {
+   "size_kb": 1210.8,
+   "lum_mean": 68.8,
+   "lum_std": 59.9,
+   "w": 1024,
+   "h": 1024
+  },
+  "output": "ST_T2I_22s20_00001_.png"
+ },
+ {
+  "key": "T2I_5f_s8_1024",
+  "wall_s": 46.5,
+  "telemetry": {
+   "gpu_mean": 61.3,
+   "gpu_max": 100.0,
+   "vram_max": 7429.0,
+   "power_mean": 74.0,
+   "temp_max": 64.0,
+   "ram_max": 0.0,
+   "samples": 15
+  },
+  "quality": {
+   "size_kb": 1235.6,
+   "lum_mean": 123.0,
+   "lum_std": 60.0,
+   "w": 1024,
+   "h": 1024
+  },
+  "output": "ST_T2I_5s8_00001_.png"
+ },
+ {
+  "key": "T2I_124f_s8_1024",
+  "error": "no image output"
+ },
+ {
+  "key": "I2I_1f_s8_str099",
+  "wall_s": 172.3,
+  "telemetry": {
+   "gpu_mean": 79.4,
+   "gpu_max": 100.0,
+   "vram_max": 7435.0,
+   "power_mean": 101.6,
+   "temp_max": 69.0,
+   "ram_max": 0.7,
+   "samples": 55
+  },
+  "quality": {
+   "size_kb": 1189.6,
+   "lum_mean": 42.4,
+   "lum_std": 44.4,
+   "w": 1376,
+   "h": 768,
+   "sim_psnr": 10.48,
+   "sim_mse": 5825.3
+  },
+  "output": "ST_I2I_1f_00002_.png"
+ },
+ {
+  "key": "I2I_22f_s8_str099",
+  "wall_s": 90.1,
+  "telemetry": {
+   "gpu_mean": 84.2,
+   "gpu_max": 99.0,
+   "vram_max": 7293.0,
+   "power_mean": 107.8,
+   "temp_max": 66.0,
+   "ram_max": 0.7,
+   "samples": 29
+  },
+  "quality": {
+   "size_kb": 1159.9,
+   "lum_mean": 46.8,
+   "lum_std": 49.4,
+   "w": 1376,
+   "h": 768,
+   "sim_psnr": 8.09,
+   "sim_mse": 10090.0
+  },
+  "output": "ST_I2I_22f099_00001_.png"
+ },
+ {
+  "key": "I2I_22f_s8_str090",
+  "wall_s": 90.1,
+  "telemetry": {
+   "gpu_mean": 76.9,
+   "gpu_max": 100.0,
+   "vram_max": 7414.0,
+   "power_mean": 105.6,
+   "temp_max": 66.0,
+   "ram_max": 0.7,
+   "samples": 29
+  },
+  "quality": {
+   "size_kb": 1155.8,
+   "lum_mean": 56.1,
+   "lum_std": 55.0,
+   "w": 1376,
+   "h": 768,
+   "sim_psnr": 7.9,
+   "sim_mse": 10545.1
+  },
+  "output": "ST_I2I_22f090_00001_.png"
+ },
+ {
+  "key": "I2I_22f_s8_str080",
+  "wall_s": 90.3,
+  "telemetry": {
+   "gpu_mean": 79.0,
+   "gpu_max": 99.0,
+   "vram_max": 7233.0,
+   "power_mean": 104.7,
+   "temp_max": 66.0,
+   "ram_max": 0.7,
+   "samples": 29
+  },
+  "quality": {
+   "size_kb": 1148.5,
+   "lum_mean": 47.6,
+   "lum_std": 49.7,
+   "w": 1376,
+   "h": 768,
+   "sim_psnr": 7.75,
+   "sim_mse": 10920.0
+  },
+  "output": "ST_I2I_22f080_00001_.png"
+ },
+ {
+  "key": "I2I_22f_s20_str095",
+  "wall_s": 183.3,
+  "telemetry": {
+   "gpu_mean": 82.2,
+   "gpu_max": 100.0,
+   "vram_max": 7263.0,
+   "power_mean": 111.5,
+   "temp_max": 66.0,
+   "ram_max": 0.7,
+   "samples": 58
+  },
+  "quality": {
+   "size_kb": 1228.2,
+   "lum_mean": 40.2,
+   "lum_std": 43.0,
+   "w": 1376,
+   "h": 768,
+   "sim_psnr": 10.07,
+   "sim_mse": 6400.8
+  },
+  "output": "ST_I2I_22f20_00001_.png"
+ }
+]

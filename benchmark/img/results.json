@@ -1,0 +1,204 @@
+[
+ {
+  "key": "KREA_1024_s8_cfg1",
+  "wall_s": 26.3,
+  "telemetry": {
+   "gpu_mean": 70.9,
+   "gpu_max": 99.0,
+   "vram_max": 7371.0,
+   "power_mean": 105.3,
+   "temp_max": 62.0,
+   "samples": 26
+  },
+  "quality": {
+   "size_kb": 1316.3,
+   "w": 1024,
+   "h": 1024,
+   "lum_mean": 109.5,
+   "lum_std": 65.8
+  },
+  "output": "IMG_KR_s8_00001_.png"
+ },
+ {
+  "key": "KREA_1024_s4_cfg1",
+  "wall_s": 16.1,
+  "telemetry": {
+   "gpu_mean": 64.6,
+   "gpu_max": 99.0,
+   "vram_max": 7486.0,
+   "power_mean": 96.9,
+   "temp_max": 62.0,
+   "samples": 16
+  },
+  "quality": {
+   "size_kb": 1227.0,
+   "w": 1024,
+   "h": 1024,
+   "lum_mean": 103.9,
+   "lum_std": 71.2
+  },
+  "output": "IMG_KR_s4_00001_.png"
+ },
+ {
+  "key": "NOOBAI_1024_s20_cfg5",
+  "wall_s": 18.1,
+  "telemetry": {
+   "gpu_mean": 60.4,
+   "gpu_max": 100.0,
+   "vram_max": 7243.0,
+   "power_mean": 87.7,
+   "temp_max": 59.0,
+   "samples": 18
+  },
+  "quality": {
+   "size_kb": 1299.0,
+   "w": 1024,
+   "h": 1024,
+   "lum_mean": 109.9,
+   "lum_std": 55.1
+  },
+  "output": "IMG_NB_s20_00001_.png"
+ },
+ {
+  "key": "NOOBAI_1024_s30_cfg5",
+  "wall_s": 18.1,
+  "telemetry": {
+   "gpu_mean": 75.2,
+   "gpu_max": 100.0,
+   "vram_max": 7355.0,
+   "power_mean": 115.5,
+   "temp_max": 62.0,
+   "samples": 18
+  },
+  "quality": {
+   "size_kb": 1355.3,
+   "w": 1024,
+   "h": 1024,
+   "lum_mean": 97.8,
+   "lum_std": 44.0
+  },
+  "output": "IMG_NB_s30_00001_.png"
+ },
+ {
+  "key": "NOOBAI_1024_s20_cfg7",
+  "wall_s": 14.1,
+  "telemetry": {
+   "gpu_mean": 69.9,
+   "gpu_max": 99.0,
+   "vram_max": 7410.0,
+   "power_mean": 102.8,
+   "temp_max": 62.0,
+   "samples": 14
+  },
+  "quality": {
+   "size_kb": 1203.1,
+   "w": 1024,
+   "h": 1024,
+   "lum_mean": 106.0,
+   "lum_std": 48.5
+  },
+  "output": "IMG_NB_cfg7_00001_.png"
+ },
+ {
+  "key": "NOOBAI_832x1216_s25",
+  "wall_s": 16.1,
+  "telemetry": {
+   "gpu_mean": 71.9,
+   "gpu_max": 100.0,
+   "vram_max": 7405.0,
+   "power_mean": 110.0,
+   "temp_max": 63.0,
+   "samples": 16
+  },
+  "quality": {
+   "size_kb": 1240.9,
+   "w": 832,
+   "h": 1216,
+   "lum_mean": 102.4,
+   "lum_std": 42.5
+  },
+  "output": "IMG_NB_vert_00001_.png"
+ },
+ {
+  "key": "NOOBAI_I2I_s20_dn075",
+  "wall_s": 10.1,
+  "telemetry": {
+   "gpu_mean": 48.7,
+   "gpu_max": 99.0,
+   "vram_max": 6937.0,
+   "power_mean": 80.2,
+   "temp_max": 60.0,
+   "samples": 10
+  },
+  "quality": {
+   "size_kb": 523.1,
+   "w": 864,
+   "h": 480,
+   "lum_mean": 59.3,
+   "lum_std": 54.4,
+   "sim_psnr": 15.58
+  },
+  "output": "IMG_NB_i2i_00001_.png"
+ },
+ {
+  "key": "KREA_1024_s12_cfg1",
+  "wall_s": 38.2,
+  "telemetry": {
+   "gpu_mean": 73.5,
+   "gpu_max": 100.0,
+   "vram_max": 7304.0,
+   "power_mean": 111.7,
+   "temp_max": 64.0,
+   "samples": 37
+  },
+  "quality": {
+   "size_kb": 1186.9,
+   "w": 1024,
+   "h": 1024,
+   "lum_mean": 114.5,
+   "lum_std": 65.9
+  },
+  "output": "IMG_KR_s12_00001_.png"
+ },
+ {
+  "key": "KREA_1024_s8_lora09",
+  "wall_s": 36.2,
+  "telemetry": {
+   "gpu_mean": 89.2,
+   "gpu_max": 100.0,
+   "vram_max": 7201.0,
+   "power_mean": 114.4,
+   "temp_max": 64.0,
+   "samples": 35
+  },
+  "quality": {
+   "size_kb": 1333.9,
+   "w": 1024,
+   "h": 1024,
+   "lum_mean": 114.3,
+   "lum_std": 71.8
+  },
+  "output": "IMG_KR_lora_00001_.png"
+ },
+ {
+  "key": "KREA_I2I_s8_dn07",
+  "wall_s": 16.1,
+  "telemetry": {
+   "gpu_mean": 71.3,
+   "gpu_max": 97.0,
+   "vram_max": 7085.0,
+   "power_mean": 87.1,
+   "temp_max": 63.0,
+   "samples": 16
+  },
+  "quality": {
+   "size_kb": 471.4,
+   "w": 864,
+   "h": 480,
+   "lum_mean": 94.4,
+   "lum_std": 57.7,
+   "sim_psnr": 11.91
+  },
+  "output": "IMG_KR_i2i_00001_.png"
+ }
+]

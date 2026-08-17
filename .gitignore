@@ -1,0 +1,28 @@
+# 模型权重(体积巨大且各有许可,绝不入库)
+models/
+ComfyUI/
+downloads/
+
+# 运行产物
+output/
+*.log
+*.log.err
+
+# venv / Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# 基准运行产物(数据结果保留,中间产物忽略)
+benchmark/**/telemetry/
+benchmark/**/out/
+benchmark/**/frames/
+benchmark/**/bench_log*.txt
+
+# 系统
+Thumbs.db
+.DS_Store
