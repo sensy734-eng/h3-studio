@@ -156,4 +156,4 @@ By installing or using this project, you acknowledge that you have read and agre
 
 - The MiniMax team and the H3 open-source community
 - [T8mars](https://github.com/T8mars) and the ComfyUI ecosystem node authors
-- All open-source authors who have optimized for 8GB VRAM
+- All open-source authors dedicated to low-VRAM local AI deployment and optimization
