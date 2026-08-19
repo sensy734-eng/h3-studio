@@ -338,9 +338,9 @@
       <div class="field">
         <label>图生图默认后端</label>
         <select id="setI2IBackend">
+          <option value="qwen">Qwen-Edit 2511(编辑/中文强,默认)</option>
           <option value="noobai">NoobAI-XL(快)</option>
           <option value="krea">Krea-2-Turbo(遵循强)</option>
-          <option value="qwen">Qwen-Edit 2511(编辑/中文强)</option>
         </select>
       </div>
       <div class="field">
@@ -1868,7 +1868,7 @@ function renderSettings(){
     });
   }
   sm.value = uiSettings.startMode || '';
-  $('setI2IBackend').value = uiSettings.i2iBackend || 'noobai';
+  $('setI2IBackend').value = uiSettings.i2iBackend || 'qwen';
   $('setDenoise').value = (uiSettings.i2iDenoise!=null) ? uiSettings.i2iDenoise : '0.75';
   $('setI2ISteps').value = uiSettings.i2iSteps || '20';
   const chips = $('presetModeChips');
@@ -1953,10 +1953,11 @@ function renderPresetVersions(){
     toast('🗑️ 已删除版本: '+v); renderPresetVersions(); refreshPresetSelect();
   });
 }
-/* 默认参数:进入 I2I 时应用设置页保存的值 */
+/* 默认参数:进入 I2I 时应用设置页保存的值(I2I 默认后端 = Qwen) */
 function applyI2IDefaults(){
   if(mode!=='I2I') return;
   if(uiSettings.i2iBackend) $('stillBackend').value = uiSettings.i2iBackend;
+  else $('stillBackend').value = 'qwen';
   if(uiSettings.i2iDenoise!=null) $('stillDenoise').value = uiSettings.i2iDenoise;
   if(uiSettings.i2iSteps) $('stillSteps').value = uiSettings.i2iSteps;
 }
