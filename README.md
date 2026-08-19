@@ -18,7 +18,8 @@
 | 🧩 Ref2VA | 多参考(≤9 图 + ≤3 视频 + ≤3 音频)换人/换装/改风格 |
 | 🎬 MULTI | 多镜头短片:分镜 → 逐镜生成(自动首帧衔接)→ 一键 ffmpeg 拼接(硬切/叠化) |
 | ✨ PROMPT | 大白话 → H3 最佳实践提示词(本地规则引擎,零依赖) |
-| 🖼️ T2I / 🎨 I2I | 专职图像模型:NoobAI-XL(SDXL)、Krea-2-Turbo(NVFP4)与 **Qwen-Image-Edit 2511(GGUF)**,含负面提示词/denoise/加速 LoRA |
+| 🖼️ T2I / 🎨 I2I | 专职图像模型:NoobAI-XL(SDXL)、Krea-2-Turbo(NVFP4)与 **Qwen-Image-Edit 2511(GGUF)**,含负面提示词/denoise/加速 LoRA;**重绘模式(涂抹蒙版)** |
+| ⚙️ SETTINGS | 设置页:每模式多版本提示词预设库、默认参数、模型状态检查、历史/预设导出导入 |
 
 **特色**
 - 生成历史(视频/图片可分开筛选,localStorage 持久化)
@@ -71,6 +72,7 @@ powershell -ExecutionPolicy Bypass -File scripts\launcher.ps1
 | `qwen-image-edit-2511-Q4_K_M.gguf` | 12.3GB | Qwen 图生图编辑 UNET(GGUF Q4) | Qwen 社区 GGUF 转换 |
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors` | 8.7GB | Qwen 文本编码器 | Comfy-Org / Qwen |
 | `Qwen-Image-Lightning-8steps-V1.1-bf16.safetensors` | 0.8GB | Qwen 8 步加速 LoRA | Qwen-Image-Lightning |
+| `Qwen-Image-InstantX-ControlNet-Inpainting.safetensors` | 4.0GB | Qwen 重绘蒙版 ControlNet | Comfy-Org/Qwen-Image-InstantX-ControlNets |
 
 > ⚠️ **权重不随本仓库分发**,请通过 `download_models.ps1` 或原仓库获取。各权重许可与地区限制详见 [NOTICE.md](NOTICE.md)。
 

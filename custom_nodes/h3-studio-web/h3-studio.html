@@ -111,11 +111,17 @@
     <div class="tab" data-mode="PROMPT">✨ 提示词优化</div>
     <div class="tab" data-mode="T2I">🖼️ 文生图</div>
     <div class="tab" data-mode="I2I">🎨 图生图</div>
+    <div class="tab" data-mode="SETTINGS">⚙️ 设置</div>
   </div>
 </div>
 
 <div class="card" id="promptCard">
   <h2>提示词<span class="hint">描述画面 + 动作 + 声音(英文效果最佳)</span></h2>
+  <div class="opt" style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+    <span style="font-size:12px; color:var(--dim)">📋 预设版本:</span>
+    <select id="presetSelect" style="flex:1; background:var(--panel2); border:1px solid var(--line); border-radius:8px; color:var(--txt); padding:6px 10px; font-size:13px"></select>
+    <span class="chip" id="presetManage" style="white-space:nowrap">⚙️ 管理</span>
+  </div>
   <textarea id="prompt" placeholder="例如: A cinematic close-up of a young woman in golden hour light, she turns her head slowly and smiles, gentle breeze, shallow depth of field. Sound: soft street ambience, light wind, no music."></textarea>
   <div class="chips">
     <div class="chip" data-insert="画面:">➕ 画面</div>
@@ -217,6 +223,20 @@
         <input type="file" accept="image/*" id="stillFile">
       </div>
       <div class="opt" id="stillHint"></div>
+      <label style="margin-top:10px; display:flex; align-items:center; gap:6px; cursor:pointer">
+        <input type="checkbox" id="inpaintMode" style="width:auto"> 🎨 重绘模式(涂抹区域重绘,仅 Qwen 后端)
+      </label>
+      <div id="inpaintPanel" style="display:none; margin-top:8px; background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:10px">
+        <div style="font-size:12px; color:var(--dim); margin-bottom:6px">白色涂抹 = 要重绘的区域,其余保留原图</div>
+        <canvas id="inpaintCanvas" style="max-width:100%; border-radius:6px; background:#000; cursor:crosshair; touch-action:none"></canvas>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap">
+          <label style="font-size:12px; color:var(--dim)">笔刷 <input type="range" id="inpaintBrush" min="4" max="120" value="30" style="width:100px; vertical-align:middle"></label>
+          <span class="chip" id="inpaintClear">🧹 清除蒙版</span>
+          <span class="chip" id="inpaintFillAll">⬜ 全选(整图重绘)</span>
+          <span class="chip" id="inpaintUndo">↩️ 撤销</span>
+        </div>
+        <div class="opt" id="inpaintStatus" style="margin-top:6px">上传源图后可开始涂抹</div>
+      </div>
     </div>
     <div class="field">
       <label>图片尺寸(文生图)</label>
@@ -295,6 +315,70 @@
   <div class="prog" id="stillProg"><div class="bar" id="stillProgBar"></div></div>
   <div class="progbar-label" id="stillProgLabel"></div>
   <div id="stillResult"></div>
+</div>
+
+<div class="card" id="settingsCard" style="display:none">
+  <h2>⚙️ 设置<span class="hint">预设与偏好保存在浏览器本地(localStorage),不影响其他用户</span></h2>
+
+  <div class="settings-sec" style="margin-bottom:16px">
+    <h3 style="font-size:14px; margin-bottom:6px">📋 提示词预设库</h3>
+    <div class="opt" style="margin-bottom:8px">每个模式可维护多个版本的提示词,生成页顶部下拉直接选用;标 ⭐ 的为默认版本</div>
+    <div class="chips" id="presetModeChips" style="margin-bottom:10px"></div>
+    <div id="presetVersions"></div>
+  </div>
+
+  <div class="settings-sec" style="margin-bottom:16px">
+    <h3 style="font-size:14px; margin-bottom:6px">🎚️ 默认参数</h3>
+    <div class="grid">
+      <div class="field">
+        <label>启动默认模式</label>
+        <select id="setStartMode"></select>
+        <div class="opt">打开页面时自动进入的模式</div>
+      </div>
+      <div class="field">
+        <label>图生图默认后端</label>
+        <select id="setI2IBackend">
+          <option value="noobai">NoobAI-XL(快)</option>
+          <option value="krea">Krea-2-Turbo(遵循强)</option>
+          <option value="qwen">Qwen-Edit 2511(编辑/中文强)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>图生图默认 denoise</label>
+        <input type="number" id="setDenoise" value="0.75" min="0.05" max="1" step="0.05">
+      </div>
+      <div class="field">
+        <label>图生图默认步数</label>
+        <select id="setI2ISteps">
+          <option value="20">20 步</option>
+          <option value="8">8 步</option>
+          <option value="30">30 步</option>
+          <option value="4">4 步</option>
+          <option value="12">12 步</option>
+        </select>
+      </div>
+    </div>
+    <div class="chips" style="margin-top:8px"><div class="chip" id="setSaveDefaults">💾 保存默认参数</div></div>
+  </div>
+
+  <div class="settings-sec" style="margin-bottom:16px">
+    <h3 style="font-size:14px; margin-bottom:6px">📦 模型状态</h3>
+    <div class="opt" style="margin-bottom:8px">检查 models 目录权重是否就位(每个后端所需文件)</div>
+    <div id="modelStatus" style="font-size:12px"><span style="color:var(--dim)">加载中…</span></div>
+    <div class="chips" style="margin-top:8px"><div class="chip" id="setRefreshModels">🔄 刷新模型状态</div></div>
+  </div>
+
+  <div class="settings-sec">
+    <h3 style="font-size:14px; margin-bottom:6px">💾 数据管理</h3>
+    <div class="opt" style="margin-bottom:8px">历史记录与提示词预设的导出/导入/清空(JSON 格式)</div>
+    <div class="chips">
+      <div class="chip" id="setExportHist">⬇️ 导出历史</div>
+      <div class="chip" id="setImportHist">⬆️ 导入历史</div>
+      <div class="chip" id="setClearHist">🗑️ 清空历史</div>
+      <div class="chip" id="setClearPresets">🗑️ 清空预设</div>
+    </div>
+    <input type="file" id="setHistFile" accept=".json,application/json" style="display:none">
+  </div>
 </div>
 
 <div class="card" id="optCard" style="display:none">
@@ -493,10 +577,13 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
   const isMulti = mode==='MULTI';
   const isPrompt = mode==='PROMPT';
   const isStill = (mode==='T2I'||mode==='I2I');
-  // 大卡片显隐:视频模式显示 prompt/param/gen;图片模式显示 prompt/param(仅前缀);MULTI/PROMPT 独占
-  ['promptCard','imageCard','refCard','paramCard','genCard','multiCard'].forEach(id=>{ $(id).style.display = (isMulti||isPrompt||isStill) ? 'none' : ''; });
+  const isSettings = mode==='SETTINGS';
+  // 大卡片显隐:视频模式显示 prompt/param/gen;图片模式显示 prompt/param(仅前缀);MULTI/PROMPT/SETTINGS 独占
+  ['promptCard','imageCard','refCard','paramCard','genCard','multiCard'].forEach(id=>{ $(id).style.display = (isMulti||isPrompt||isStill||isSettings) ? 'none' : ''; });
   $('optCard').style.display = isPrompt ? '' : 'none';
   $('stillCard').style.display = isStill ? '' : 'none';
+  $('settingsCard').style.display = isSettings ? '' : 'none';
+  if(isSettings){ renderSettings(); }
   if(isStill){
     $('promptCard').style.display='';
     $('paramCard').style.display='';
@@ -507,18 +594,20 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
     });
     $('stillTitleText').textContent = mode==='T2I' ? '🖼️ 文生图' : '🎨 图生图';
     $('stillTitle').querySelector('.hint').textContent = mode==='T2I'
-      ? '纯文字 → 图片(NoobAI-XL / Krea-2-Turbo 专职图像模型)'
+      ? '纯文字 → 图片(NoobAI-XL / Krea-2-Turbo / Qwen-Edit 2511 专职图像模型)'
       : '源图 + 描述 → 编辑后的图片(denoise 控制改动幅度)';
     $('i2iSrcField').style.display = mode==='I2I' ? '' : 'none';
+    applyI2IDefaults();
     syncStillUI();
   } else {
-    // 视频/多镜头/优化器模式:恢复 paramCard 全部字段(清除图片模式的隐藏残留)
+    // 视频/多镜头/优化器/设置模式:恢复 paramCard 全部字段(清除图片模式的隐藏残留)
     document.querySelectorAll('#paramCard .field').forEach(f=>{ f.style.display=''; });
   }
   $('imageCard').style.display = (mode==='I2VA'||mode==='FL2VA') ? '' : 'none';
   $('lastFrameField').style.display = mode==='FL2VA' ? '' : 'none';
   $('refCard').style.display = mode==='Ref2VA' ? '' : 'none';
   $('multiCard').style.display = isMulti ? '' : 'none';
+  refreshPresetSelect();
   renderBenchTable();
   updateRatioStatus();
 }));
@@ -1181,8 +1270,115 @@ $('optExampleMulti').addEventListener('click', ()=>{
 });
 
 /* ---------- 图片生成(文生图 T2I / 图生图 I2I) ---------- */
-let stillImg = null, stillImgDims = null;
+let stillImg = null, stillImgDims = null, stillImgFile = null, inpaintMask = null;
 bindUpload('stillUpload','stillFile','stillHint','stillThumb','stillSub','stillClear', n=>stillImg=n, d=>stillImgDims=d);
+$('stillFile').addEventListener('change', e=>{ stillImgFile = (e.target.files && e.target.files[0]) || null; });
+
+/* ---------- 重绘蒙版工具(Qwen Inpainting) ---------- */
+let inpaintCtx=null, inpaintMaskLayer=null, inpaintHistory=[], inpaintDrawing=false, inpaintLast=null;
+const inpaintCv = $('inpaintCanvas');
+function inpaintInitCanvas(){
+  if(!stillImgFile){ $('inpaintStatus').textContent = '请先上传源图'; return; }
+  const img = new Image();
+  img.onload = ()=>{
+    const maxW = 640;
+    const scale = Math.min(1, maxW / img.naturalWidth);
+    inpaintCv.width = Math.round(img.naturalWidth*scale);
+    inpaintCv.height = Math.round(img.naturalHeight*scale);
+    inpaintCtx = inpaintCv.getContext('2d');
+    inpaintMaskLayer = document.createElement('canvas');
+    inpaintMaskLayer.width = inpaintCv.width; inpaintMaskLayer.height = inpaintCv.height;
+    inpaintHistory = [];
+    inpaintRedraw(img);
+    $('inpaintStatus').textContent = '开始涂抹:白色区域将被重绘,其余保留';
+  };
+  img.src = URL.createObjectURL(stillImgFile);
+}
+function inpaintRedraw(srcImg){
+  inpaintCtx.clearRect(0,0,inpaintCv.width,inpaintCv.height);
+  if(srcImg) inpaintCtx.drawImage(srcImg, 0, 0, inpaintCv.width, inpaintCv.height);
+  if(inpaintMaskLayer){
+    inpaintCtx.globalAlpha = 0.55;
+    inpaintCtx.drawImage(inpaintMaskLayer, 0, 0);
+    inpaintCtx.globalAlpha = 1;
+  }
+}
+function inpaintXY(e){
+  const r = inpaintCv.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * (inpaintCv.width / r.width),
+           y: (e.clientY - r.top) * (inpaintCv.height / r.height) };
+}
+function inpaintStroke(p){
+  if(!inpaintCtx || !inpaintMaskLayer) return;
+  const mctx = inpaintMaskLayer.getContext('2d');
+  const r = parseInt($('inpaintBrush').value);
+  mctx.beginPath();
+  mctx.arc(p.x, p.y, r/2, 0, Math.PI*2);
+  mctx.fillStyle = '#ffffff';
+  mctx.fill();
+  // 笔触连线
+  if(inpaintLast){
+    mctx.beginPath();
+    mctx.moveTo(inpaintLast.x, inpaintLast.y);
+    mctx.lineTo(p.x, p.y);
+    mctx.lineWidth = r;
+    mctx.lineCap = 'round';
+    mctx.strokeStyle = '#ffffff';
+    mctx.stroke();
+  }
+  inpaintLast = p;
+  inpaintRedraw();
+}
+inpaintCv.addEventListener('mousedown', e=>{ inpaintDrawing=true; inpaintLast=null; inpaintStroke(inpaintXY(e)); });
+window.addEventListener('mousemove', e=>{ if(inpaintDrawing) inpaintStroke(inpaintXY(e)); });
+window.addEventListener('mouseup', ()=>{ if(inpaintDrawing){ inpaintDrawing=false; inpaintSnapshot(); } });
+inpaintCv.addEventListener('touchstart', e=>{ e.preventDefault(); const t=e.touches[0]; inpaintDrawing=true; inpaintLast=null; inpaintStroke({x:t.clientX,y:t.clientY}); }, {passive:false});
+inpaintCv.addEventListener('touchmove', e=>{ e.preventDefault(); const t=e.touches[0]; if(inpaintDrawing) inpaintStroke({x:t.clientX,y:t.clientY}); }, {passive:false});
+inpaintCv.addEventListener('touchend', e=>{ e.preventDefault(); if(inpaintDrawing){ inpaintDrawing=false; inpaintSnapshot(); } }, {passive:false});
+function inpaintSnapshot(){
+  if(!inpaintMaskLayer) return;
+  inpaintHistory.push(inpaintMaskLayer.toDataURL());
+  if(inpaintHistory.length>20) inpaintHistory.shift();
+}
+$('inpaintClear').addEventListener('click', ()=>{
+  if(!inpaintMaskLayer) return;
+  inpaintMaskLayer.getContext('2d').clearRect(0,0,inpaintMaskLayer.width,inpaintMaskLayer.height);
+  inpaintHistory=[]; inpaintRedraw(); inpaintMask=null;
+  $('inpaintStatus').textContent = '蒙版已清除';
+});
+$('inpaintFillAll').addEventListener('click', ()=>{
+  if(!inpaintMaskLayer) return;
+  inpaintMaskLayer.getContext('2d').fillStyle='#ffffff';
+  inpaintMaskLayer.getContext('2d').fillRect(0,0,inpaintMaskLayer.width,inpaintMaskLayer.height);
+  inpaintSnapshot(); inpaintRedraw();
+  $('inpaintStatus').textContent = '已全选(整图重绘)';
+});
+$('inpaintUndo').addEventListener('click', ()=>{
+  if(!inpaintHistory.length){ toast('没有可撤销的步骤'); return; }
+  const prev = inpaintHistory.pop();
+  const img = new Image();
+  img.onload = ()=>{
+    inpaintMaskLayer.getContext('2d').clearRect(0,0,inpaintMaskLayer.width,inpaintMaskLayer.height);
+    inpaintMaskLayer.getContext('2d').drawImage(img,0,0);
+    inpaintRedraw();
+  };
+  img.src = prev;
+});
+async function inpaintUploadMask(){
+  if(!inpaintMaskLayer) return null;
+  const blob = await new Promise(r=>inpaintMaskLayer.toBlob(r,'image/png'));
+  const fd = new FormData();
+  fd.append('image', blob, 'mask_'+Date.now()+'.png');
+  const r = await fetch(API+'/upload/image', {method:'POST', body:fd});
+  if(!r.ok) throw new Error('蒙版上传失败');
+  const j = await r.json();
+  inpaintMask = j.name;
+  return j.name;
+}
+$('inpaintMode').addEventListener('change', ()=>{
+  $('inpaintPanel').style.display = $('inpaintMode').checked ? '' : 'none';
+  if($('inpaintMode').checked) inpaintInitCanvas();
+});
 
 const STILL_BENCH = {
   noobai: '⚡ 本机实测(RTX 5060 8GB): NoobAI-XL 1024² · 20步·cfg5 ≈ 14-18s/张 · 图生图 dn0.75 ≈ 10s · VRAM 峰值 ~7.4GB',
@@ -1290,6 +1486,7 @@ function buildStillQwen(prompt, seed, prefix){
   const [sampler,sched] = $('stillSampler').value.split('|');
   const lora = parseFloat($('stillQwenLora').value)||0;
   const denoise = mode==='I2I' ? stillDenoiseVal() : 1.0;
+  const inpaint = (mode==='I2I' && $('inpaintMode').checked);
   const n = {
     '1': {class_type:'UnetLoaderGGUF', inputs:{unet_name:'qwen-image-edit-2511-Q4_K_M.gguf', weight_dtype:'default'}},
     '2': {class_type:'CLIPLoader', inputs:{clip_name:'qwen_2.5_vl_7b_fp8_scaled.safetensors', type:'qwen_image', device:'default'}},
@@ -1305,7 +1502,23 @@ function buildStillQwen(prompt, seed, prefix){
     n['4'] = {class_type:'LoraLoaderModelOnly', inputs:{lora_name:'Qwen-Image-Lightning-8steps-V1.1-bf16.safetensors', strength_model:lora, model:['1',0]}};
     n['5'].inputs.model = ['4',0];
   }
-  if(mode==='I2I'){
+  if(inpaint){
+    // 重绘模式:蒙版 + Inpainting ControlNet,denoise 固定 1.0
+    if(!stillImg) throw new Error('请先上传源图');
+    if(!inpaintMask) throw new Error('请先在重绘面板涂抹蒙版(白色=重绘区)');
+    n['8'] = {class_type:'LoadImage', inputs:{image:stillImg}};
+    n['7'] = {class_type:'TextEncodeQwenImageEditPlus', inputs:{clip:['2',0], prompt, vae:['3',0], image1:['8',0]}};
+    n['9'] = {class_type:'LoadImage', inputs:{image:inpaintMask}};
+    n['15'] = {class_type:'ControlNetLoader', inputs:{control_net_name:'Qwen-Image-InstantX-ControlNet-Inpainting.safetensors'}};
+    n['16'] = {class_type:'ControlNetInpaintingAliMamaApply', inputs:{positive:['7',0], negative:['10',0], control_net:['15',0], vae:['3',0], image:['8',0], mask:['9',1], strength:1.0, start_percent:0.0, end_percent:1.0}};
+    n['17'] = {class_type:'VAEEncode', inputs:{pixels:['8',0], vae:['3',0]}};
+    n['18'] = {class_type:'SetLatentNoiseMask', inputs:{samples:['17',0], mask:['9',1]}};
+    n['10'] = {class_type:'CLIPTextEncode', inputs:{text:'', clip:['2',0]}};
+    n['11'].inputs.positive = ['16',0];
+    n['11'].inputs.negative = ['16',1];
+    n['11'].inputs.latent_image = ['18',0];
+    n['11'].inputs.denoise = 1.0;
+  } else if(mode==='I2I'){
     if(!stillImg) throw new Error('请先上传源图');
     n['8'] = {class_type:'LoadImage', inputs:{image:stillImg}};
     n['7'] = {class_type:'TextEncodeQwenImageEditPlus', inputs:{clip:['2',0], prompt, vae:['3',0], image1:['8',0]}};
@@ -1365,7 +1578,15 @@ function buildStillH3(prompt, seed, prefix){
 }
 async function genStill(){
   let nodes;
-  try{ nodes = buildStillNodes(); }catch(e){ toast('❌ '+e.message); return; }
+  try{
+    // 重绘模式:先上传蒙版再构建节点
+    if(mode==='I2I' && $('inpaintMode').checked){
+      if($('stillBackend').value!=='qwen') throw new Error('重绘模式目前仅支持 Qwen 后端');
+      $('stillProgLabel').textContent='上传蒙版…';
+      await inpaintUploadMask();
+    }
+    nodes = buildStillNodes();
+  }catch(e){ toast('❌ '+e.message); return; }
   const btn=$('stillGen'); btn.disabled=true; btn.textContent='⏳ 生成中…';
   const prog=$('stillProg'); prog.style.display='block'; $('stillProgLabel').style.display='block';
   $('stillProgBar').style.width='0%'; $('stillProgLabel').textContent='提交…';
@@ -1407,7 +1628,7 @@ async function genStill(){
               cfg:$('stillCfg').value, sampler:$('stillSampler').value, seed:$('stillSeed').value,
               denoise: mode==='I2I' ? $('stillDenoise').value : '-',
               lora: $('stillBackend').value==='krea' ? $('stillLora').value : '-'},
-      refs: mode==='I2I' && stillImg ? [{type:'img', name:stillImg, label:'源图'}] : []};
+      refs: (mode==='I2I' && stillImg) ? [{type:'img', name:stillImg, label:($('inpaintMode').checked?'源图(重绘)':'源图')}, ...($('inpaintMode').checked && inpaintMask ? [{type:'img', name:inpaintMask, label:'蒙版'}] : [])] : []};
     myHistory.unshift(rec); myHistory = myHistory.slice(0,30); saveHist(); renderHist();
   }catch(e){
     $('stillProgLabel').textContent='❌ '+e.message;
@@ -1520,7 +1741,7 @@ async function submit(){
 $('genBtn').addEventListener('click', submit);
 
 /* ---------- 历史 ---------- */
-const MODE_NAMES = {T2VA:'📝 文生', I2VA:'🖼️ 图生', FL2VA:'🔄 首尾帧', Ref2VA:'🧩 多参考', MULTI:'🎬 多镜头', T2I:'🖼️ 文生图', I2I:'🎨 图生图'};
+const MODE_NAMES = {T2VA:'📝 文生', I2VA:'🖼️ 图生', FL2VA:'🔄 首尾帧', Ref2VA:'🧩 多参考', MULTI:'🎬 多镜头', T2I:'🖼️ 文生图', I2I:'🎨 图生图', SETTINGS:'⚙️ 设置'};
 function fmtDur(s){
   s = parseInt(s); if(!s || isNaN(s)) return '—';
   if(s < 60) return s + ' 秒';
@@ -1604,6 +1825,217 @@ document.querySelectorAll('.hist-filter').forEach(c=>{
   });
 });
 
+/* ---------- 设置:提示词预设库 / 默认参数 / 模型状态 / 数据管理 ---------- */
+const PRESET_MODES = ['T2VA','I2VA','FL2VA','Ref2VA','MULTI','T2I','I2I'];
+let presets = {}, presetDefaults = {}, uiSettings = {};
+try { presets = JSON.parse(localStorage.getItem('h3studio_presets')||'{}'); } catch(e){}
+try { presetDefaults = JSON.parse(localStorage.getItem('h3studio_preset_default')||'{}'); } catch(e){}
+try { uiSettings = JSON.parse(localStorage.getItem('h3studio_settings')||'{}'); } catch(e){}
+function savePresets(){ try{ localStorage.setItem('h3studio_presets', JSON.stringify(presets)); }catch(e){} }
+function saveUiSettings(){ try{ localStorage.setItem('h3studio_settings', JSON.stringify(uiSettings)); }catch(e){} }
+
+/* 生成页顶部:预设版本下拉(当前模式) */
+function refreshPresetSelect(){
+  const sel = $('presetSelect');
+  const versions = presets[mode] || {};
+  const keys = Object.keys(versions);
+  sel.innerHTML = '<option value="">— 不使用预设 —</option>';
+  keys.forEach(k=>{
+    const op = document.createElement('option');
+    op.value = k;
+    op.textContent = (presetDefaults[mode]===k ? '⭐ ' : '') + k;
+    sel.appendChild(op);
+  });
+  if(keys.length && presetDefaults[mode]) sel.value = presetDefaults[mode];
+  else sel.value = '';
+}
+$('presetSelect').addEventListener('change', ()=>{
+  const v = $('presetSelect').value;
+  if(v && presets[mode] && presets[mode][v]) $('prompt').value = presets[mode][v];
+});
+$('presetManage').addEventListener('click', ()=>{
+  document.querySelector('.tab[data-mode="SETTINGS"]').click();
+  $('presetModeChips').scrollIntoView({behavior:'smooth'});
+});
+
+/* 设置页渲染 */
+let presetModeSel = 'T2VA';
+function renderSettings(){
+  const sm = $('setStartMode');
+  if(sm.options.length===0){
+    ['T2VA','I2VA','FL2VA','Ref2VA','MULTI','PROMPT','T2I','I2I'].forEach(m=>{
+      const op = document.createElement('option'); op.value=m; op.textContent=MODE_NAMES[m]||m; sm.appendChild(op);
+    });
+  }
+  sm.value = uiSettings.startMode || '';
+  $('setI2IBackend').value = uiSettings.i2iBackend || 'noobai';
+  $('setDenoise').value = (uiSettings.i2iDenoise!=null) ? uiSettings.i2iDenoise : '0.75';
+  $('setI2ISteps').value = uiSettings.i2iSteps || '20';
+  const chips = $('presetModeChips');
+  chips.innerHTML='';
+  PRESET_MODES.forEach(m=>{
+    const c=document.createElement('div');
+    c.className='chip'+(m===presetModeSel?' active':'');
+    c.textContent=MODE_NAMES[m]||m;
+    c.addEventListener('click', ()=>{ presetModeSel=m; renderPresetVersions(); });
+    chips.appendChild(c);
+  });
+  renderPresetVersions();
+  renderModelStatus();
+}
+function renderPresetVersions(){
+  const el = $('presetVersions');
+  const versions = presets[presetModeSel] || {};
+  const keys = Object.keys(versions);
+  let h = '<div class="opt" style="margin-bottom:6px">模式 <b>'+(MODE_NAMES[presetModeSel]||presetModeSel)+'</b> 的预设版本('+keys.length+' 个):</div>';
+  if(!keys.length) h += '<div style="color:var(--dim);font-size:12px;margin-bottom:8px">暂无版本 — 输入名称与内容后点「＋ 新建」</div>';
+  else h += '<div class="chips" style="margin-bottom:8px">' + keys.map(k=>
+    '<div class="chip" data-v="'+esc(k)+'">'+(presetDefaults[presetModeSel]===k?'⭐ ':'')+esc(k)+'</div>').join('') + '</div>';
+  h += '<div style="display:flex; gap:8px; margin-bottom:8px"><input type="text" id="presetNewName" placeholder="版本名称,如:写实电影" style="flex:1; background:var(--panel2); border:1px solid var(--line); border-radius:8px; color:var(--txt); padding:8px 10px"><button class="btn ghost" id="presetNewBtn" style="padding:8px 14px">＋ 新建</button></div>';
+  h += '<textarea id="presetEditText" placeholder="该版本的提示词内容(英文效果最佳)…" style="min-height:110px"></textarea>';
+  h += '<div class="chips" style="margin-top:8px">';
+  h += '<div class="chip" id="presetSave">💾 保存到当前版本</div>';
+  h += '<div class="chip" id="presetSetDefault">⭐ 设为默认版本</div>';
+  h += '<div class="chip" id="presetFill">📥 填入生成页</div>';
+  h += '<div class="chip" id="presetDelete" style="color:var(--err)">🗑️ 删除</div>';
+  h += '</div>';
+  el.innerHTML = h;
+  el.querySelectorAll('.chip[data-v]').forEach(c=>c.addEventListener('click', ()=>{
+    const v = c.dataset.v;
+    $('presetEditText').value = (presets[presetModeSel]||{})[v] || '';
+    el.querySelectorAll('.chip[data-v]').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    $('presetNewName').value = v;
+  }));
+  $('presetNewBtn').addEventListener('click', ()=>{
+    const name = $('presetNewName').value.trim();
+    if(!name){ toast('请输入版本名称'); return; }
+    presets[presetModeSel] = presets[presetModeSel] || {};
+    if(presets[presetModeSel][name]){ toast('版本已存在,点版本可编辑'); return; }
+    presets[presetModeSel][name] = $('presetEditText').value;
+    if(!presetDefaults[presetModeSel]) presetDefaults[presetModeSel] = name;
+    savePresets(); localStorage.setItem('h3studio_preset_default', JSON.stringify(presetDefaults));
+    toast('✅ 已新建版本: '+name); renderPresetVersions(); refreshPresetSelect();
+  });
+  $('presetSave').addEventListener('click', ()=>{
+    const active = el.querySelector('.chip[data-v].active');
+    const v = active ? active.dataset.v : $('presetNewName').value.trim();
+    if(!v){ toast('请先输入版本名称或点击版本'); return; }
+    presets[presetModeSel] = presets[presetModeSel] || {};
+    presets[presetModeSel][v] = $('presetEditText').value;
+    savePresets();
+    toast('✅ 已保存到版本: '+v); renderPresetVersions(); refreshPresetSelect();
+  });
+  $('presetSetDefault').addEventListener('click', ()=>{
+    const active = el.querySelector('.chip[data-v].active');
+    const v = active ? active.dataset.v : $('presetNewName').value.trim();
+    if(!v || !(presets[presetModeSel]||{})[v]){ toast('请先选择要设为默认的版本'); return; }
+    presetDefaults[presetModeSel] = v;
+    localStorage.setItem('h3studio_preset_default', JSON.stringify(presetDefaults));
+    toast('✅ 已设为默认: '+v); renderPresetVersions(); refreshPresetSelect();
+  });
+  $('presetFill').addEventListener('click', ()=>{
+    const active = el.querySelector('.chip[data-v].active');
+    const v = active ? active.dataset.v : $('presetNewName').value.trim();
+    if(!v || !(presets[presetModeSel]||{})[v]){ toast('请先选择版本'); return; }
+    $('prompt').value = presets[presetModeSel][v];
+    document.querySelector('.tab[data-mode="'+presetModeSel+'"]')?.click();
+    toast('✅ 已填入,并在 '+ (MODE_NAMES[presetModeSel]||presetModeSel) +' 模式就绪');
+  });
+  $('presetDelete').addEventListener('click', ()=>{
+    const active = el.querySelector('.chip[data-v].active');
+    const v = active ? active.dataset.v : $('presetNewName').value.trim();
+    if(!v || !(presets[presetModeSel]||{})[v]){ toast('请先选择要删除的版本'); return; }
+    delete presets[presetModeSel][v];
+    if(presetDefaults[presetModeSel]===v) delete presetDefaults[presetModeSel];
+    if(!Object.keys(presets[presetModeSel]).length) delete presets[presetModeSel];
+    savePresets(); localStorage.setItem('h3studio_preset_default', JSON.stringify(presetDefaults));
+    toast('🗑️ 已删除版本: '+v); renderPresetVersions(); refreshPresetSelect();
+  });
+}
+/* 默认参数:进入 I2I 时应用设置页保存的值 */
+function applyI2IDefaults(){
+  if(mode!=='I2I') return;
+  if(uiSettings.i2iBackend) $('stillBackend').value = uiSettings.i2iBackend;
+  if(uiSettings.i2iDenoise!=null) $('stillDenoise').value = uiSettings.i2iDenoise;
+  if(uiSettings.i2iSteps) $('stillSteps').value = uiSettings.i2iSteps;
+}
+$('setSaveDefaults').addEventListener('click', ()=>{
+  uiSettings.startMode = $('setStartMode').value;
+  uiSettings.i2iBackend = $('setI2IBackend').value;
+  uiSettings.i2iDenoise = parseFloat($('setDenoise').value)||0.75;
+  uiSettings.i2iSteps = $('setI2ISteps').value;
+  saveUiSettings();
+  toast('✅ 默认参数已保存');
+});
+/* 模型状态(需后端 /h3-studio/models) */
+let modelFilesCache = null;
+async function renderModelStatus(){
+  const el = $('modelStatus');
+  try{
+    if(!modelFilesCache) modelFilesCache = await jget('/h3-studio/models');
+    const need = [
+      {cat:'checkpoints', f:'NoobAI-XL-v1.0.safetensors', label:'NoobAI-XL(文生图/图生图)'},
+      {cat:'diffusion_models', f:'krea2_turbo_nvfp4.safetensors', label:'Krea-2-Turbo'},
+      {cat:'diffusion_models', f:'qwen-image-edit-2511-Q4_K_M.gguf', label:'Qwen-Edit 2511(GGUF)'},
+      {cat:'text_encoders', f:'qwen_2.5_vl_7b_fp8_scaled.safetensors', label:'Qwen 文本编码器'},
+      {cat:'text_encoders', f:'qwen3vl_4b_fp8_scaled.safetensors', label:'Krea 文本编码器'},
+      {cat:'text_encoders', f:'qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors', label:'H3 文本编码器'},
+      {cat:'vae', f:'qwen_image_vae.safetensors', label:'Qwen/Krea VAE'},
+      {cat:'vae', f:'minimax_h3_video_vae_fp16.safetensors', label:'H3 视频 VAE'},
+      {cat:'vae', f:'minimax_h3_audio_vae_fp32.safetensors', label:'H3 音频 VAE'},
+      {cat:'diffusion_models', f:'minimax_h3_fl2va_pruned_int8_convrot.safetensors', label:'H3 FL2VA'},
+      {cat:'diffusion_models', f:'minimax_h3_ref2va_pruned_int8_convrot.safetensors', label:'H3 Ref2VA'},
+      {cat:'loras', f:'krea2_style_reference.safetensors', label:'Krea 风格 LoRA'},
+      {cat:'loras', f:'Qwen-Image-Lightning-8steps-V1.1-bf16.safetensors', label:'Qwen Lightning LoRA'},
+    ];
+    let h = '';
+    need.forEach(it=>{
+      const ok = (modelFilesCache[it.cat]||[]).includes(it.f);
+      h += '<div style="padding:3px 0">'+(ok?'✅':'❌')+' <span style="'+(ok?'':'color:var(--err)')+'">'+esc(it.label)+'</span> <span style="color:var(--dim)">'+esc(it.f)+'</span></div>';
+    });
+    el.innerHTML = h;
+  }catch(e){
+    el.innerHTML = '<span style="color:var(--err)">模型状态不可用(ComfyUI 未连接): '+esc(e.message)+'</span>';
+  }
+}
+$('setRefreshModels').addEventListener('click', ()=>{ modelFilesCache=null; renderModelStatus(); });
+/* 数据管理 */
+$('setExportHist').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(myHistory, null, 1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'h3studio_history.json';
+  a.click();
+});
+$('setImportHist').addEventListener('click', ()=> $('setHistFile').click());
+$('setHistFile').addEventListener('change', ()=>{
+  const f = $('setHistFile').files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const arr = JSON.parse(r.result);
+      if(!Array.isArray(arr)) throw new Error('格式错误');
+      myHistory = arr.slice(0, 300); saveHist(); renderHist();
+      toast('✅ 已导入 '+arr.length+' 条历史');
+    }catch(e){ toast('❌ 导入失败: '+e.message, 6000); }
+  };
+  r.readAsText(f);
+  $('setHistFile').value='';
+});
+$('setClearHist').addEventListener('click', ()=>{
+  if(!confirm('确定清空全部生成历史?')) return;
+  myHistory=[]; saveHist(); renderHist(); toast('🗑️ 历史已清空');
+});
+$('setClearPresets').addEventListener('click', ()=>{
+  if(!confirm('确定清空全部提示词预设?')) return;
+  presets={}; presetDefaults={};
+  savePresets(); localStorage.setItem('h3studio_preset_default', '{}');
+  renderPresetVersions(); refreshPresetSelect();
+  toast('🗑️ 预设已清空');
+});
+
 /* ---------- 初始化 ---------- */
 (async function(){
   await loadObjInfo();
@@ -1614,6 +2046,12 @@ document.querySelectorAll('.hist-filter').forEach(c=>{
   updateRatioStatus();
   renderShots();
   renderHist();
+  refreshPresetSelect();
+  // 启动默认模式(设置页配置)
+  if(uiSettings.startMode){
+    const t = document.querySelector('.tab[data-mode="'+uiSettings.startMode+'"]');
+    if(t && t.dataset.mode!=='T2VA') t.click();
+  }
   setInterval(()=>{ if(!$('genBtn').disabled) refreshStatus(); }, 15000);
 })();
 </script>

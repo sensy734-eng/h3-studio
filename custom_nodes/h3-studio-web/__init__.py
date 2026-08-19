@@ -4,6 +4,7 @@ H3 Studio - MiniMax H3 简洁出片面板 + 多镜头拼接服务
 路由:
   GET  /h3-studio           出片面板页面
   GET  /h3-studio/{name}    静态资源
+  GET  /h3-studio/models    模型文件清单(设置页状态检查)
   POST /h3-studio/frame     抽取视频最后一帧 -> input 目录(用于下一镜头首帧衔接)
   POST /h3-studio/stitch    多镜头拼接(硬切 -c copy / 叠化 xfade+acrossfade)
 """
@@ -17,6 +18,7 @@ try:
     COMFY_ROOT = ROOT.parent.parent  # .../ComfyUI/ComfyUI-master
     OUT_DIR = COMFY_ROOT / "output"
     INP_DIR = COMFY_ROOT / "input"
+    MODELS_DIR = COMFY_ROOT.parent.parent / "models"  # 仓库根/models(extra_model_paths 映射目录)
 
     @PromptServer.instance.routes.get("/h3-studio")
     async def h3_studio_index(request):
@@ -31,6 +33,19 @@ try:
         if p.is_file():
             return web.FileResponse(p)
         return web.Response(status=404)
+
+    @PromptServer.instance.routes.get("/h3-studio/models")
+    async def h3_studio_models(request):
+        """扫描 ComfyUI 模型目录,返回 {类别: [文件名]} 供设置页检查"""
+        cats = ["checkpoints", "diffusion_models", "text_encoders", "vae", "loras", "controlnet"]
+        out = {}
+        for cat in cats:
+            d = MODELS_DIR / cat
+            if d.is_dir():
+                out[cat] = sorted(p.name for p in d.iterdir() if p.is_file())
+            else:
+                out[cat] = []
+        return web.json_response(out)
 
     @PromptServer.instance.routes.post("/h3-studio/frame")
     async def h3_extract_last_frame(request):

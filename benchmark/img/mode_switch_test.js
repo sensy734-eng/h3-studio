@@ -98,6 +98,7 @@ const sandbox = {
   fetch: () => new Promise((_, rej) => rej(new Error('offline'))),
   location: { host: '127.0.0.1:8188' },
   navigator: { clipboard: undefined },
+  window: { addEventListener: () => {}, },
   WebSocket: function () {},
   URL: { createObjectURL: () => 'blob:stub' },
   FormData: function () {},
