@@ -36,6 +36,12 @@ $jobs = @(
     @{ dir='loras';           name='krea2_style_reference.safetensors';        size=436;  url='https://hf-mirror.com/Comfy-Org/Krea-2/resolve/main/loras/krea2_style_reference.safetensors' }
 )
 
+# ---------- Qwen 权重(可选后端;GGUF 见社区转换,Lightning LoRA 见 Qwen-Image-Lightning) ----------
+# 以下条目仅提示用途,不自动下载(GGUF 来源分散,请按 README 模型清单自行获取):
+#   diffusion_models/qwen-image-edit-2511-Q4_K_M.gguf               (12.3 GB, Qwen 社区 GGUF 转换)
+#   text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors             (8.7 GB, 官方 fp8 编码器)
+#   loras/Qwen-Image-Lightning-8steps-V1.1-bf16.safetensors         (0.8 GB, 8 步加速 LoRA)
+
 # ---------- MiniMax H3 权重清单(需手动获取,文件名必须一致) ----------
 $h3Files = @(
     @{ dir='diffusion_models'; name='minimax_h3_fl2va_pruned_int8_convrot.safetensors'; size=19999 },

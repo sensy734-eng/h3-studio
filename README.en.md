@@ -18,7 +18,7 @@
 | 🧩 Ref2VA | Multi-reference (≤9 images + ≤3 videos + ≤3 audios): identity / outfit / style editing |
 | 🎬 MULTI | Multi-shot short film: storyboard → shot-by-shot generation (auto first-frame chaining) → one-click ffmpeg stitching (hard cut / crossfade) |
 | ✨ PROMPT | Plain-language → H3 best-practice prompt optimizer (local rule engine, zero dependencies) |
-| 🖼️ T2I / 🎨 I2I | Dedicated image backends: NoobAI-XL (SDXL) and Krea-2-Turbo (NVFP4), with negative prompt / denoise / style LoRA |
+| 🖼️ T2I / 🎨 I2I | Dedicated image backends: NoobAI-XL (SDXL), Krea-2-Turbo (NVFP4) and **Qwen-Image-Edit 2511 (GGUF)**, with negative prompt / denoise / speed LoRA |
 
 **Highlights**
 - Generation history (video/image filterable separately, persisted in localStorage)
@@ -68,6 +68,9 @@ powershell -ExecutionPolicy Bypass -File scripts\launcher.ps1
 | `qwen3vl_4b_fp8_scaled.safetensors` | 5.0GB | Krea-2 text encoder | see Comfy-Org/Krea-2 |
 | `qwen_image_vae.safetensors` | 0.2GB | Krea-2 VAE | see Comfy-Org/Krea-2 |
 | `krea2_style_reference.safetensors` | 0.4GB | Krea style-reference LoRA | see Comfy-Org/Krea-2 |
+| `qwen-image-edit-2511-Q4_K_M.gguf` | 12.3GB | Qwen edit UNet (GGUF Q4) | Qwen community GGUF |
+| `qwen_2.5_vl_7b_fp8_scaled.safetensors` | 8.7GB | Qwen text encoder | Comfy-Org / Qwen |
+| `Qwen-Image-Lightning-8steps-V1.1-bf16.safetensors` | 0.8GB | Qwen 8-step speed LoRA | Qwen-Image-Lightning |
 
 > ⚠️ **Weights are NOT distributed with this repo** — fetch them via `download_models.ps1` or from the original repos. Licenses and regional restrictions: see [NOTICE.md](NOTICE.md).
 
@@ -94,6 +97,8 @@ powershell -ExecutionPolicy Bypass -File scripts\launcher.ps1
 | NoobAI-XL | img2img dn0.75 | 10 s | 6.9GB |
 | Krea-2-Turbo | 4 steps·cfg1 | 16 s | 7.5GB |
 | Krea-2-Turbo | 8 steps·cfg1 | 26 s | 7.4GB |
+| Qwen-Edit 2511 | 8 steps·cfg1 (Lightning) | 80-95 s | 7.4GB |
+| Qwen-Edit 2511 | 20 steps·cfg4 (standard) | 260 s | 7.4GB |
 
 Full data: `benchmark/` (results.json + per-second telemetry CSVs + reproduction scripts)
 

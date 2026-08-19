@@ -18,7 +18,7 @@
 | 🧩 Ref2VA | 多参考(≤9 图 + ≤3 视频 + ≤3 音频)换人/换装/改风格 |
 | 🎬 MULTI | 多镜头短片:分镜 → 逐镜生成(自动首帧衔接)→ 一键 ffmpeg 拼接(硬切/叠化) |
 | ✨ PROMPT | 大白话 → H3 最佳实践提示词(本地规则引擎,零依赖) |
-| 🖼️ T2I / 🎨 I2I | 专职图像模型:NoobAI-XL(SDXL)与 Krea-2-Turbo(NVFP4),含负面提示词/denoise/风格 LoRA |
+| 🖼️ T2I / 🎨 I2I | 专职图像模型:NoobAI-XL(SDXL)、Krea-2-Turbo(NVFP4)与 **Qwen-Image-Edit 2511(GGUF)**,含负面提示词/denoise/加速 LoRA |
 
 **特色**
 - 生成历史(视频/图片可分开筛选,localStorage 持久化)
@@ -68,6 +68,9 @@ powershell -ExecutionPolicy Bypass -File scripts\launcher.ps1
 | `qwen3vl_4b_fp8_scaled.safetensors` | 5.0GB | Krea-2 文本编码器 | 见 Comfy-Org/Krea-2 |
 | `qwen_image_vae.safetensors` | 0.2GB | Krea-2 VAE | 见 Comfy-Org/Krea-2 |
 | `krea2_style_reference.safetensors` | 0.4GB | Krea 风格参考 LoRA | 见 Comfy-Org/Krea-2 |
+| `qwen-image-edit-2511-Q4_K_M.gguf` | 12.3GB | Qwen 图生图编辑 UNET(GGUF Q4) | Qwen 社区 GGUF 转换 |
+| `qwen_2.5_vl_7b_fp8_scaled.safetensors` | 8.7GB | Qwen 文本编码器 | Comfy-Org / Qwen |
+| `Qwen-Image-Lightning-8steps-V1.1-bf16.safetensors` | 0.8GB | Qwen 8 步加速 LoRA | Qwen-Image-Lightning |
 
 > ⚠️ **权重不随本仓库分发**,请通过 `download_models.ps1` 或原仓库获取。各权重许可与地区限制详见 [NOTICE.md](NOTICE.md)。
 
@@ -94,6 +97,8 @@ powershell -ExecutionPolicy Bypass -File scripts\launcher.ps1
 | NoobAI-XL | 图生图 dn0.75 | 10 秒 | 6.9GB |
 | Krea-2-Turbo | 4步·cfg1 | 16 秒 | 7.5GB |
 | Krea-2-Turbo | 8步·cfg1 | 26 秒 | 7.4GB |
+| Qwen-Edit 2511 | 8步·cfg1(Lightning 加速) | 80-95 秒 | 7.4GB |
+| Qwen-Edit 2511 | 20步·cfg4(标准) | 260 秒 | 7.4GB |
 
 完整数据:`benchmark/`(results.json + 逐秒遥测 CSV + 复现脚本)
 
