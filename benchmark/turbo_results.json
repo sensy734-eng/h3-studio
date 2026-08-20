@@ -1,0 +1,57 @@
+[
+ {
+  "key": "STD_8steps",
+  "wall_s": 219.4,
+  "telemetry": {
+   "gpu_mean": 84.4,
+   "vram_max": 7561.0,
+   "temp_max": 70.0,
+   "samples": 211
+  },
+  "output": "TB_STD_s8_00001-audio.mp4"
+ },
+ {
+  "key": "STD_20steps",
+  "wall_s": 498.8,
+  "telemetry": {
+   "gpu_mean": 83.9,
+   "vram_max": 7371.0,
+   "temp_max": 70.0,
+   "samples": 480
+  },
+  "output": "TB_STD_s20_00001-audio.mp4"
+ },
+ {
+  "key": "TURBO_4steps",
+  "wall_s": 174.4,
+  "telemetry": {
+   "gpu_mean": 76.6,
+   "vram_max": 7363.0,
+   "temp_max": 66.0,
+   "samples": 167
+  },
+  "output": "TB_T4_00001-audio.mp4"
+ },
+ {
+  "key": "TURBO_6steps",
+  "wall_s": 180.3,
+  "telemetry": {
+   "gpu_mean": 81.6,
+   "vram_max": 7614.0,
+   "temp_max": 70.0,
+   "samples": 174
+  },
+  "output": "TB_T6_00001-audio.mp4"
+ },
+ {
+  "key": "TURBO_8steps",
+  "wall_s": 234.4,
+  "telemetry": {
+   "gpu_mean": 86.6,
+   "vram_max": 7617.0,
+   "temp_max": 70.0,
+   "samples": 225
+  },
+  "output": "TB_T8_00001-audio.mp4"
+ }
+]

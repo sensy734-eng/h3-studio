@@ -446,6 +446,7 @@
       <select id="resolution">
         <option value="auto">📐 自动匹配图片比例(上传后可用)</option>
         <option value="864,480" selected>864×480 · 16:9 · 抽卡档</option>        <option value="608,352">608×352 · 16:9 · 验证档</option>
+        <option value="960,544">960×544 · 16:9 · 0.5 档(生成后放大用)</option>
         <option value="1024,576">1024×576 · 16:9</option>
         <option value="1152,640">1152×640 · 16:9</option>
         <option value="1344,768">1344×768 · 16:9 · 精修档</option>
@@ -472,6 +473,16 @@
         <option value="20">精修 · 20 步(慢)</option>
       </select>
       <div class="opt">音频敏感场景建议 20 步</div>
+    </div>
+    <div class="field">
+      <label>🚀 Turbo 加速(distill LoRA)</label>
+      <select id="turboSteps">
+        <option value="0">关闭(标准双时钟)</option>
+        <option value="8">Turbo 8 步(质量≈20步,快 2.1 倍)</option>
+        <option value="6">Turbo 6 步(均衡,最快实用档)</option>
+        <option value="4">Turbo 4 步(极速,大动作会拖影)</option>
+      </select>
+      <div class="opt">本机实测:5s 档 Turbo8 ≈ 234s(≈普通20步质量)/ Turbo6 ≈ 180s</div>
     </div>
     <div class="field">
       <label>随机种子</label>
@@ -840,21 +851,32 @@ function buildPrompt(){
       audio_denoise_strength:1.0, add_source_as_reference:false, prompt_primary_audio_ordinal:0,
       strict_prompt_tags:true, ref_image_size:'match', reference_video_policy:'official_2_to_15s',
       clip:['3',0], video_vae:['1',0], audio_vae:['2',0]}},
-    '7':  {class_type:'MiniMaxH3DualClockSamplerT8', inputs:{steps, shift_video:12.0, shift_audio:3.0, model:['4',0], av_latent:['6',1]}},
-    '8':  {class_type:'RandomNoise', inputs:{noise_seed:seed}},
-    '9':  {class_type:'BasicGuider', inputs:{model:['7',0], conditioning:['6',0]}},
-    '10': {class_type:'SamplerCustomAdvanced', inputs:{noise:['8',0], guider:['9',0], sampler:['7',1], sigmas:['7',2], latent_image:['6',1]}},
     '11': {class_type:'MiniMaxH3AVDecodeT8', inputs:{av_latent:['10',0], video_vae:['1',0], audio_vae:['2',0]}},
     '12': {class_type:'VHS_VideoCombine', inputs:{frame_rate:24, loop_count:0, filename_prefix:prefix, format:'video/h264-mp4', pix_fmt:'yuv420p', crf:19, save_metadata:true, trim_to_audio:false, pingpong:false, save_output:true, images:['11',0], audio:['11',1]}}
   };
+  const turboSteps = parseInt($('turboSteps').value);
+  if(turboSteps>0){
+    // 🚀 Turbo 加速(distill LoRA):官方 TurboLoRA + TurboSampler + simple 调度
+    nodes['7'] = {class_type:'MiniMaxH3TurboLoRA', inputs:{model:['4',0], lora_name:'minimax_h3_turbo_v4_step600_ema.safetensors', strength:1.0, low_vram:false}};
+    nodes['8'] = {class_type:'RandomNoise', inputs:{noise_seed:seed}};
+    nodes['9'] = {class_type:'BasicGuider', inputs:{model:['7',0], conditioning:['6',0]}};
+    nodes['14'] = {class_type:'MiniMaxH3TurboSampler', inputs:{}};
+    nodes['15'] = {class_type:'BasicScheduler', inputs:{model:['7',0], scheduler:'simple', steps:turboSteps, denoise:1.0}};
+    nodes['10'] = {class_type:'SamplerCustomAdvanced', inputs:{noise:['8',0], guider:['9',0], sampler:['14',0], sigmas:['15',0], latent_image:['6',1]}};
+  } else {
+    nodes['7'] = {class_type:'MiniMaxH3DualClockSamplerT8', inputs:{steps, shift_video:12.0, shift_audio:3.0, model:['4',0], av_latent:['6',1]}};
+    nodes['8'] = {class_type:'RandomNoise', inputs:{noise_seed:seed}};
+    nodes['9'] = {class_type:'BasicGuider', inputs:{model:['7',0], conditioning:['6',0]}};
+    nodes['10'] = {class_type:'SamplerCustomAdvanced', inputs:{noise:['8',0], guider:['9',0], sampler:['7',1], sigmas:['7',2], latent_image:['6',1]}};
+  }
   if(mode==='I2VA'){
     nodes['13'] = {class_type:'LoadImage', inputs:{image:firstImg}};
     nodes['6'].inputs.first_frame = ['13',0];
   } else if(mode==='FL2VA'){
     nodes['13'] = {class_type:'LoadImage', inputs:{image:firstImg}};
-    nodes['14'] = {class_type:'LoadImage', inputs:{image:lastImg}};
+    nodes['16'] = {class_type:'LoadImage', inputs:{image:lastImg}};
     nodes['6'].inputs.first_frame = ['13',0];
-    nodes['6'].inputs.last_frame = ['14',0];
+    nodes['6'].inputs.last_frame = ['16',0];
   } else if(mode==='Ref2VA'){
     refImages.forEach((it,i)=>{
       nodes[String(100+i)] = {class_type:'LoadImage', inputs:{image:it.name}};
