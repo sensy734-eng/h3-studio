@@ -1750,10 +1750,20 @@ async function submit(){
     $('genBtn').disabled=false; $('genBtn').textContent='🚀 开始生成';
     if(vfile){
       const url = API + '/view?filename='+encodeURIComponent(vfile.filename)+'&subfolder='+encodeURIComponent(vfile.subfolder||'')+'&type='+encodeURIComponent(vfile.type||'output');
-      $('result').innerHTML = '<video src="'+url+'" controls autoplay muted></video><div class="meta">✅ 生成完成,耗时 '+secs+' 秒 · <a href="'+url+'" download>下载 MP4</a> · 输出目录: D:\\MiniMax-H3\\ComfyUI\\ComfyUI-master\\output</div>';
+      $('result').innerHTML = '<video src="'+url+'" controls autoplay muted></video><div class="meta">✅ 生成完成,耗时 '+secs+' 秒 · <a href="'+url+'" download>下载 MP4</a> · 输出目录: ComfyUI/output</div>'+
+        '<div class="chips" style="margin-top:8px">🔍 放大成片:'+
+        '<select id="upModel" style="background:var(--panel2); border:1px solid var(--line); border-radius:8px; color:var(--txt); padding:6px 10px; font-size:13px">'+
+        '<option value="RealESRGAN_x4plus_anime_6B.pth">RealESRGAN 4x anime · 4 倍(实测最强+最快,推荐)</option>'+
+        '<option value="4xUltrasharp.pth">4xUltrasharp · 4 倍(锐利)</option>'+
+        '<option value="OmniSR_X2_DIV2K.safetensors">OmniSR 2x · 2 倍(轻量快速)</option>'+
+        '</select>'+
+        '<span class="chip" id="upNow">🚀 放大此片</span></div>'+
+        '<div class="opt" id="upStatus" style="margin-top:6px"></div>';
     } else {
       $('result').innerHTML = '<div class="meta">✅ 完成(耗时 '+secs+' 秒),但未找到视频输出</div>';
     }
+    // 放大按钮(事件委托:结果区是后插入的)
+    $('upNow')?.addEventListener('click', ()=>{ if(vfile) upscaleVideo(vfile.filename, $('upModel').value); });
   }catch(e){
     $('genBtn').disabled=false; $('genBtn').textContent='🚀 开始生成';
     $('progLabel').textContent='❌ '+e.message;
@@ -1761,6 +1771,59 @@ async function submit(){
   }
 }
 $('genBtn').addEventListener('click', submit);
+
+/* ---------- 成片放大(超分) ---------- */
+let outDirCache = null;
+async function getOutDir(){
+  if(!outDirCache){
+    const j = await jget('/h3-studio/output_dir');
+    outDirCache = j.output_dir;
+  }
+  return outDirCache;
+}
+async function upscaleVideo(filename, modelName){
+  const st = $('upStatus');
+  const btn = $('upNow');
+  if(!filename){ toast('没有可放大的视频'); return; }
+  btn.disabled = true; btn.textContent = '⏳ 放大中…';
+  st.textContent = '提交放大任务('+modelName+')…';
+  const nodes = {
+    '1': {class_type:'VHS_LoadVideoPath', inputs:{video: (await getOutDir()) + '\\' + filename, force_rate:0, custom_width:0, custom_height:0, frame_load_cap:0, skip_first_frames:0, select_every_nth:1}},
+    '2': {class_type:'UpscaleModelLoader', inputs:{model_name:modelName}},
+    '3': {class_type:'ImageUpscaleWithModel', inputs:{upscale_model:['2',0], image:['1',0]}},
+    '4': {class_type:'VHS_VideoCombine', inputs:{frame_rate:24, loop_count:0, filename_prefix:'UP_'+modelName.split('.')[0], format:'video/h264-mp4', pix_fmt:'yuv420p', crf:19, save_metadata:true, trim_to_audio:false, pingpong:false, save_output:true, images:['3',0], audio:['1',2]}},
+  };
+  try{
+    const r = await fetch(API+'/prompt', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:nodes, client_id:'up-'+Date.now()})});
+    const j = await r.json();
+    if(j.error || (j.node_errors && Object.keys(j.node_errors).length)){
+      const msgs = j.node_errors ? Object.values(j.node_errors).map(e=>e.errors.map(x=>x.message).join(';')).join('|') : j.error.message;
+      throw new Error('提交失败: '+msgs);
+    }
+    const pid = j.prompt_id;
+    st.textContent = '放大中…(4x 约 3-8 分钟,2x 约 1-3 分钟)';
+    let outName = null;
+    for(let i=0;i<300;i++){
+      await new Promise(r=>setTimeout(r,5000));
+      const h = await jget('/history/'+pid);
+      const e = h[pid]; if(!e) continue;
+      if(e.status.status_str==='error') throw new Error('放大任务失败');
+      if(e.status.completed){
+        for(const o of Object.values(e.outputs||{}))
+          for(const g of (o.gifs||[])) if(g.format?.startsWith('video/')) outName = g.filename;
+        break;
+      }
+    }
+    if(!outName) throw new Error('超时未完成');
+    const url = API + '/view?filename='+encodeURIComponent(outName)+'&type=output';
+    st.innerHTML = '✅ 放大完成: <a href="'+url+'" target="_blank">'+esc(outName)+'</a> · <a href="'+url+'" download>下载</a>';
+    toast('✅ 放大完成: '+outName);
+  }catch(e){
+    st.textContent = '❌ '+e.message;
+    toast('❌ '+e.message, 6000);
+  }
+  btn.disabled = false; btn.textContent = '🚀 放大此片';
+}
 
 /* ---------- 历史 ---------- */
 const MODE_NAMES = {T2VA:'📝 文生', I2VA:'🖼️ 图生', FL2VA:'🔄 首尾帧', Ref2VA:'🧩 多参考', MULTI:'🎬 多镜头', T2I:'🖼️ 文生图', I2I:'🎨 图生图', SETTINGS:'⚙️ 设置'};

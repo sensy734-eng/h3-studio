@@ -1,0 +1,23 @@
+[
+ {
+  "model": "4xUltrasharp.pth",
+  "wall_s": 465,
+  "resolution": "3840,2176",
+  "size_mb": 11.7,
+  "sharpness": 45.761810302734375
+ },
+ {
+  "model": "RealESRGAN_x4plus_anime_6B.pth",
+  "wall_s": 180,
+  "resolution": "3840,2176",
+  "size_mb": 8.3,
+  "sharpness": 49.83184051513672
+ },
+ {
+  "model": "OmniSR_X2_DIV2K.safetensors",
+  "wall_s": 145,
+  "resolution": "1920,1088",
+  "size_mb": 2.7,
+  "sharpness": 68.38671875
+ }
+]

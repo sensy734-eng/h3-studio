@@ -47,6 +47,11 @@ try:
                 out[cat] = []
         return web.json_response(out)
 
+    @PromptServer.instance.routes.get("/h3-studio/output_dir")
+    async def h3_studio_output_dir(request):
+        """返回 output 目录绝对路径(前端放大功能拼绝对路径用)"""
+        return web.json_response({"output_dir": str(OUT_DIR)})
+
     @PromptServer.instance.routes.post("/h3-studio/frame")
     async def h3_extract_last_frame(request):
         """抽视频最后一帧存到 input 目录,返回文件名供 LoadImage 使用"""
